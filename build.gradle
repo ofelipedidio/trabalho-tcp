@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'tcp.trab_1'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://maven.sing-group.org/repository/maven/'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+//    runtimeOnly 'jfugue:jfugue:4.0.3'
+
+    // https://mvnrepository.com/artifact/jfugue/jfugue
+    implementation group: 'jfugue', name: 'jfugue', version: '5.0.9'
+    implementation 'org.jaudiolibs:audioservers-javasound:2.0.0'
+}
+
+test {
+    useJUnitPlatform()
+}
