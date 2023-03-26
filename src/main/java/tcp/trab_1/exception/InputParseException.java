@@ -1,6 +1,6 @@
 package tcp.trab_1.exception;
 
-public class InputParseException extends Exception {
+public class InputParseException extends RuntimeException {
     public InputParseException() {
     }
 

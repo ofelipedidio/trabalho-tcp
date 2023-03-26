@@ -1,58 +1,50 @@
 package tcp.trab_1;
 
-import org.jfugue.pattern.Pattern;
-import org.jfugue.player.Player;
 import tcp.trab_1.exception.InputParseException;
+import tcp.trab_1.parse.Action;
+import tcp.trab_1.parse.Lexer;
+import tcp.trab_1.parse.Parser;
 
-import javax.sound.midi.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Main {
-    public static void main(String[] args) throws InvalidMidiDataException, InputParseException {
-//        Pattern p1 = new Pattern("V0 I[Piano] Eq Ch. | Eq Ch. | Dq Eq Dq Cq");
-//        Pattern p2 = new Pattern("V1 I[Flute] Rw     | Rw     | GmajQQQ  CmajQ");
-//        Player player = new Player();
-//        player.play(p1, p2);
+    public static void main(String[] args) {
+        // There are 2 ways of executing the program:
+        // 1 - No args - opens the app window
+        // 2 - "command --play <input>" - plays the input file
+        if (args.length == 0) {
+            ApplicationWindow.createWindow();
+        } else if (args.length == 2) {
+            if (!args[0].equals("--play")) {
+                System.err.println("Invalid arguments");
+                return;
+            }
 
-        PianoWindow.createWindow();
+            File file = new File(args[1]);
 
-//        LinkedList<Action> actions = Parser.parse("FAEFDECR-BR+        F FAEFDEFG G");
-//        System.out.println(actions);
-//
-//        LinkedList<String> text = new LinkedList<>();
-//
-//        int octave = 5;
-//
-//        for (Action action : actions) {
-//            switch (action) {
-//                case PLAY_A -> text.add("A" + octave + "it");
-//                case PLAY_B -> text.add("B" + octave + "it");
-//                case PLAY_C -> text.add("C" + octave + "it");
-//                case PLAY_D -> text.add("D" + octave + "it");
-//                case PLAY_E -> text.add("E" + octave + "it");
-//                case PLAY_F -> text.add("F" + octave + "it");
-//                case PLAY_G -> text.add("G" + octave + "it");
-//                case PLAY_SILENT -> text.add("R" + "it");
-//                case OCTAVE_UP -> octave++;
-//                case OCTAVE_DOWN -> octave--;
-//            };
-//        }
-//
-//        String sequence = join(" ", text);
-//        System.out.println(sequence);
-//
-//        Player player = new Player();
-//        player.play(sequence);
-    }
+            if (!file.exists()) {
+                System.err.println("File does not exist");
+                return;
+            }
 
-    public static String join(String separator, Iterable<String> iterable) {
-        StringBuilder joined = new StringBuilder();
-        Iterator<String> iterator = iterable.iterator();
-        if (iterator.hasNext())
-            joined = new StringBuilder(iterator.next());
-        while (iterator.hasNext())
-            joined.append(separator).append(iterator.next());
-        return joined.toString();
+            try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                byte[] bytes = fileInputStream.readAllBytes();
+                String input = new String(bytes, StandardCharsets.UTF_8);
+
+                //LinkedList<Action> actions = new Parser(new Lexer(input.toCharArray()).iterator());
+                Iterable<Action> actions = Parser.parse(input);
+                SoundPlayer.play(actions);
+            } catch (IOException e) {
+                System.err.println("Could not read the file!");
+                e.printStackTrace();
+            } catch (InputParseException e) {
+                System.err.println("The file does not follow the expected syntax!");
+            }
+        }
     }
 }
