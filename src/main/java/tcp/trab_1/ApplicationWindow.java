@@ -1,5 +1,7 @@
 package tcp.trab_1;
 
+import tcp.trab_1.exception.InputParseException;
+import tcp.trab_1.parse.Action;
 import tcp.trab_1.parse.Parser;
 
 import javax.swing.*;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class ApplicationWindow extends JPanel {
     private final JTextArea textArea;
@@ -28,17 +31,16 @@ public class ApplicationWindow extends JPanel {
         }
 
         {
-            JPanel inputPanel = new JPanel();
-            inputPanel.setLayout(new BorderLayout());
-            inputPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+            this.textArea = new JTextArea();
+            this.textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            this.textArea.setLineWrap(true);
 
-            {
-                this.textArea = new JTextArea();
-                this.textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                inputPanel.add(textArea, BorderLayout.CENTER);
-            }
+            JScrollPane scrollPane = new JScrollPane(this.textArea);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-            this.add(inputPanel, BorderLayout.CENTER);
+            this.add(scrollPane, BorderLayout.CENTER);
         }
 
         {
@@ -88,7 +90,16 @@ public class ApplicationWindow extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             String input = textArea.getText();
-            Parser actions = Parser.parse(input);
+            Parser parser = Parser.parse(input);
+
+            ArrayList<Action> actions = new ArrayList<>();
+            try {
+                parser.forEach(actions::add);
+            } catch (InputParseException exception) {
+                JOptionPane.showMessageDialog(null, "Entrada invalida!", "Erro!", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             SoundPlayer.play(actions);
         }
     }
@@ -98,7 +109,7 @@ public class ApplicationWindow extends JPanel {
         public void actionPerformed(ActionEvent event) {
             // Use JFileChooser to open a file
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Open a file");
+            fileChooser.setDialogTitle("Abra um arquivo");
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
             JFrame frame = new JFrame();
@@ -114,8 +125,11 @@ public class ApplicationWindow extends JPanel {
                 File file = fileChooser.getSelectedFile();
                 frame.dispose();
 
+                if (file == null)
+                    return;
+
                 if (!file.exists()) {
-                    JOptionPane.showMessageDialog(null, "File does not exist");
+                    JOptionPane.showMessageDialog(null, "Arquivo nao encontrado!");
                     System.err.printf("File (%s) does not exist%n", file.getAbsolutePath());
                     return;
                 }
@@ -124,7 +138,7 @@ public class ApplicationWindow extends JPanel {
                     String fileContents = new String(fileInputStream.readAllBytes(), StandardCharsets.UTF_8);
                     textArea.setText(fileContents);
                 } catch (IOException exception) {
-                    JOptionPane.showMessageDialog(null, "Could not read the file!");
+                    JOptionPane.showMessageDialog(null, "Nao foi possivel ler o arquivo");
                     System.err.printf("Could not read the file! (%s)%n", file.getAbsolutePath());
                     exception.printStackTrace();
                 }
@@ -135,7 +149,51 @@ public class ApplicationWindow extends JPanel {
     public class SaveMIDIHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            throw new RuntimeException("Not implemented yet! :(");
+            // Use JFileChooser to open a file
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Salvar MIDI");
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+            JFrame frame = new JFrame();
+            {
+                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                frame.setContentPane(fileChooser);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
+
+            fileChooser.addActionListener((ignored) -> {
+                File file = fileChooser.getSelectedFile();
+                frame.dispose();
+
+                if (file.exists()) {
+                    int result = JOptionPane.showConfirmDialog(null, "Esse arquivo ja existe, voce deseja sobrescrever?", "Sobrescrever?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                    if (result != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                String input = textArea.getText();
+                Parser parser = Parser.parse(input);
+
+                ArrayList<Action> actions = new ArrayList<>();
+                try {
+                    parser.forEach(actions::add);
+                } catch (InputParseException exception) {
+                    JOptionPane.showMessageDialog(null, "Entrada invalida!", "Erro!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    SoundPlayer.saveToMidi(actions, file);
+                    JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso!");
+                } catch (IOException ex) {
+                    System.err.println("Could not save the file!");
+                    JOptionPane.showMessageDialog(null, "Nao foi possivel salvar o arquivo!", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            });
         }
     }
 }

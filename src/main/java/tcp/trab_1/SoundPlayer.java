@@ -1,218 +1,122 @@
 package tcp.trab_1;
 
+import org.jfugue.midi.MidiDictionary;
+import org.jfugue.midi.MidiFileManager;
+import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
 import tcp.trab_1.parse.Action;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class SoundPlayer {
+    private static class PlayerState {
+        public int currentInstrument;
+        public int currentOctave;
 
-    private Player player;
-    private int currentInstrument;
-    private int currentOctave;
-
-    public SoundPlayer() {
-        player = new Player();
-        currentInstrument = 0;
-        currentOctave = 5;
-    }
-
-    private void executeActions(Iterable<Action> actions) {
-        StringBuilder patternBuilder = parseActionsIntoJFugueString(actions);
-
-        try {
-            player.play(patternBuilder.toString());
-        } catch (RuntimeException exception) {
-            throw new RuntimeException("Could not play the pattern: '" + patternBuilder.toString() + "'", exception);
+        public PlayerState(int currentInstrument, int currentOctave) {
+            this.currentInstrument = currentInstrument;
+            this.currentOctave = currentOctave;
         }
     }
 
-    public StringBuilder parseActionsIntoJFugueString(Iterable<Action> actions) {
+    private SoundPlayer() {}
+
+    private static String parseActionsIntoJFugueString(Iterable<Action> actions) {
         StringBuilder patternBuilder = new StringBuilder();
+        PlayerState playerState = new PlayerState(0, 5);
 
         for (Action action : actions) {
-            handleAction(patternBuilder, action);
+            handleAction(patternBuilder, playerState, action);
         }
-        return patternBuilder;
+
+
+        patternBuilder.append("R R R");
+        return patternBuilder.toString();
     }
 
-    private void handleAction(StringBuilder patternBuilder, Action action) {
+    private static void handleAction(StringBuilder patternBuilder, PlayerState state, Action action) {
         switch (action) {
-            case PLAY_A -> patternBuilder.append("A").append(currentOctave).append(" ");
-            case PLAY_B -> patternBuilder.append("B").append(currentOctave).append(" ");
-            case PLAY_C -> patternBuilder.append("C").append(currentOctave).append(" ");
-            case PLAY_D -> patternBuilder.append("D").append(currentOctave).append(" ");
-            case PLAY_E -> patternBuilder.append("E").append(currentOctave).append(" ");
-            case PLAY_F -> patternBuilder.append("F").append(currentOctave).append(" ");
-            case PLAY_G -> patternBuilder.append("G").append(currentOctave).append(" ");
+            case PLAY_A -> patternBuilder.append("A").append(state.currentOctave).append(" ");
+            case PLAY_B -> patternBuilder.append("B").append(state.currentOctave).append(" ");
+            case PLAY_C -> patternBuilder.append("C").append(state.currentOctave).append(" ");
+            case PLAY_D -> patternBuilder.append("D").append(state.currentOctave).append(" ");
+            case PLAY_E -> patternBuilder.append("E").append(state.currentOctave).append(" ");
+            case PLAY_F -> patternBuilder.append("F").append(state.currentOctave).append(" ");
+            case PLAY_G -> patternBuilder.append("G").append(state.currentOctave).append(" ");
             case DOUBLE_VOLUME_ROLL_OVER -> patternBuilder.append("DOUBLE_VOLUME_ROLL_OVER ");
-            case OCTAVE_UP_ROLL_OVER -> currentOctave = (currentOctave + 1) % 10;
-            case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_117 -> {
-                currentInstrument = 117;
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+            case OCTAVE_UP_ROLL_OVER -> state.currentOctave = (state.currentOctave + 1) % 10;
+            case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_114 -> {
+                state.currentInstrument = 113;
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_7 -> {
-                currentInstrument = 7;
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+                state.currentInstrument = 6;
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_15 -> {
-                currentInstrument = 15; // Tubular_Bells
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+                state.currentInstrument = 14; // Tubular_Bells
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_76 -> {
-                currentInstrument = 76;
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+                state.currentInstrument = 75;
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case CHANGE_INSTRUMENT_TO_GENERAL_MIDI_20 -> {
-                currentInstrument = 20;
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+                state.currentInstrument = 19;
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case INCREASE_INSTRUMENT_BY_0, INCREASE_INSTRUMENT_BY_1, INCREASE_INSTRUMENT_BY_2, INCREASE_INSTRUMENT_BY_3, INCREASE_INSTRUMENT_BY_4, INCREASE_INSTRUMENT_BY_5, INCREASE_INSTRUMENT_BY_6, INCREASE_INSTRUMENT_BY_7, INCREASE_INSTRUMENT_BY_8, INCREASE_INSTRUMENT_BY_9 -> {
-                currentInstrument = (currentInstrument + (action.ordinal() - Action.INCREASE_INSTRUMENT_BY_0.ordinal())) % 128;
-                patternBuilder.append("I[").append(getJFugueInstrumentLabel(currentInstrument)).append("] ");
+                state.currentInstrument = (state.currentInstrument + (action.ordinal() - Action.INCREASE_INSTRUMENT_BY_0.ordinal())) % 128;
+                patternBuilder.append("I[").append(getInstrument(state.currentInstrument)).append("] ");
             }
             case PAUSE -> patternBuilder.append("R ");
         }
     }
 
-    private String getJFugueInstrumentLabel(int index) {
-        String[] instrumentLabels = {
-                "Piano",
-                "Bright_Acoustic",
-                "Electric_Grand",
-                "Honky_Tonk",
-                "Electric_Piano",
-                "Electric_Piano_2",
-                "Harpsichord",
-                "Clav",
-                "Celesta",
-                "Glockenspiel",
-                "Music_Box",
-                "Vibraphone",
-                "Marimba",
-                "Xylophone",
-                "Tubular_Bells",
-                "Dulcimer",
-                "Drawbar_Organ",
-                "Percussive_Organ",
-                "Rock_Organ",
-                "Church_Organ",
-                "Reed_Organ",
-                "Accordion",
-                "Harmonica",
-                "Tango_Accordion",
-                "Acoustic_Guitar_Nylon",
-                "Acoustic_Guitar_Steel",
-                "Electric_Guitar_Jazz",
-                "Electric_Guitar_Clean",
-                "Electric_Guitar_Muted",
-                "Overdriven_Guitar",
-                "Distortion_Guitar",
-                "Guitar_Harmonics",
-                "Acoustic_Bass",
-                "Electric_Bass_Finger",
-                "Electric_Bass_Pick",
-                "Fretless_Bass",
-                "Slap_Bass_1",
-                "Slap_Bass_2",
-                "Synth_Bass_1",
-                "Synth_Bass_2",
-                "Violin",
-                "Viola",
-                "Cello",
-                "Contrabass",
-                "Tremolo_Strings",
-                "Pizzicato_Strings",
-                "Orchestral_Harp",
-                "Timpani",
-                "String_Ensemble_1",
-                "String_Ensemble_2",
-                "Synth_Strings_1",
-                "Synth_Strings_2",
-                "Choir_Aahs",
-                "Voice_Oohs",
-                "Synth_Voice",
-                "Orchestra_Hit",
-                "Trumpet",
-                "Trombone",
-                "Tuba",
-                "Muted_Trumpet",
-                "French_Horn",
-                "Brass_Section",
-                "Synth_Brass_1",
-                "Synth_Brass_2",
-                "Soprano_Sax",
-                "Alto_Sax",
-                "Tenor_Sax",
-                "Baritone_Sax",
-                "Oboe",
-                "English_Horn",
-                "Bassoon",
-                "Clarinet",
-                "Piccolo",
-                "Flute",
-                "Recorder",
-                "Pan_Flute",
-                "Blown_Bottle",
-                "Shakuhachi",
-                "Whistle",
-                "Ocarina",
-                "Lead_1_Square",
-                "Lead_2_Sawtooth",
-                "Lead_3_Calliope",
-                "Lead_4_Chiff",
-                "Lead_5_Charang",
-                "Lead_6_Voice",
-                "Lead_7_Fifths",
-                "Lead_8_Bass_Lead",
-                "Pad_1_New_Age",
-                "Pad_2_Warm",
-                "Pad_3_Polysynth",
-                "Pad_4_Choir",
-                "Pad_5_Bowed",
-                "Pad_6_Metallic",
-                "Pad_7_Halo",
-                "Pad_8_Sweep",
-                "FX_1_Rain",
-                "FX_2_Soundtrack",
-                "FX_3_Crystal",
-                "FX_4_Atmosphere",
-                "FX_5_Brightness",
-                "FX_6_Goblins",
-                "FX_7_Echoes",
-                "FX_8_Sci_Fi",
-                "Sitar",
-                "Banjo",
-                "Shamisen",
-                "Koto",
-                "Kalimba",
-                "Bagpipe",
-                "Fiddle",
-                "Shanai",
-                "Tinkle_Bell",
-                "Agogo",
-                "Steel_Drums",
-                "Woodblock",
-                "Taiko_Drum",
-                "Melodic_Tom",
-                "Synth_Drum",
-                "Reverse_Cymbal",
-                "Guitar_Fret_Noise",
-                "Breath_Noise",
-                "Seashore",
-                "Bird_Tweet",
-                "Telephone_Ring",
-                "Helicopter",
-                "Applause",
-                "Gunshot"
-        };
-
-        if (index >= 0 && index < instrumentLabels.length) {
-            return instrumentLabels[index];
-        }
-        return "Piano"; // Default instrument
+    private static String getInstrument(int index) {
+        return MidiDictionary.INSTRUMENT_BYTE_TO_STRING.get((byte) index);
     }
 
     public static void play(Iterable<Action> actions) {
-        SoundPlayer player = new SoundPlayer();
-        player.executeActions(actions);
+        new Thread(() -> {
+            String pattern = parseActionsIntoJFugueString(actions);
+
+            Player player = new Player();
+            try {
+                player.play(pattern);
+            } catch (RuntimeException exception) {
+                throw new RuntimeException("Could not play the pattern: '" + pattern + "'", exception);
+            }
+        }).start();
+    }
+
+    public static void saveToMidi(Iterable<Action> actions, File file) throws IOException {
+        Pattern pattern = new Pattern(parseActionsIntoJFugueString(actions));
+        MidiFileManager.savePatternToMidi(pattern, file);
+    }
+
+    public static void main(String[] args) {
+        // This checks every instrument
+        for (int i = 0; i < 128; i++) {
+            ArrayList<Action> actions = new ArrayList<>(2+i);
+            actions.add(Action.INCREASE_INSTRUMENT_BY_0);
+
+            for (int j = 0; j < i; j++) {
+                actions.add(Action.INCREASE_INSTRUMENT_BY_1);
+            }
+
+            actions.add(Action.PLAY_C);
+
+            System.out.println("Playing " + i);
+
+            try {
+                play(actions);
+            } catch (RuntimeException e) {
+                System.out.println("Failed to play " + i + " (" + getInstrument(i) + ")");
+                break;
+            }
+        }
     }
 }

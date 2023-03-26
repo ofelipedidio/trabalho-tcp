@@ -4,23 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c52b1120-0ba9-4182-9c6c-ffca550a8d5d" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/OptionalIterator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Action.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Lexer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Parser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Token.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestLexer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="c52b1120-0ba9-4182-9c6c-ffca550a8d5d" name="Changes" comment="Temp commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/Action.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/ApplicationWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/ApplicationWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/Parser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/PianoWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/ApplicationWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/PreAction.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/SoundPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/SoundPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/exception/InputParseException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/exception/InputParseException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/exception/UnfinishedWordException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tcp/trab_1/parse/Parser.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,12 +83,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Parser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="tcp.trab_1.parse.Parser" />
+    <configuration name="SoundPlayer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="tcp.trab_1.SoundPlayer" />
       <module name="trabalho_tcp.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="tcp.trab_1.parse.*" />
+          <option name="PATTERN" value="tcp.trab_1.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -177,11 +167,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.SoundPlayer" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.TestLexer.testNotes" />
         <item itemvalue="Gradle.TestLexer" />
         <item itemvalue="Gradle.TestLexer.test" />
-        <item itemvalue="Application.Parser" />
       </list>
     </recent_temporary>
   </component>
@@ -200,8 +190,16 @@
       <workItem from="1679782184372" duration="100000" />
       <workItem from="1679782322800" duration="5925000" />
       <workItem from="1679829416816" duration="3309000" />
-      <workItem from="1679833836679" duration="11244000" />
+      <workItem from="1679833836679" duration="19325000" />
     </task>
+    <task id="LOCAL-00001" summary="Temp commit">
+      <created>1679849142060</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1679849142060</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,17 +207,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/tcp/trab_1/ApplicationWindow.java</url>
-          <line>49</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Temp commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Temp commit" />
   </component>
 </project>

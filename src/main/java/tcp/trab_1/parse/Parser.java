@@ -37,7 +37,7 @@ public class Parser implements OptionalIterator<Action> {
             case QUESTION_MARK -> Action.OCTAVE_UP_ROLL_OVER;
 
             // Control (instrument)
-            case EXCLAMATION -> Action.CHANGE_INSTRUMENT_TO_GENERAL_MIDI_117;
+            case EXCLAMATION -> Action.CHANGE_INSTRUMENT_TO_GENERAL_MIDI_114;
             case OTHER_VOWEL -> Action.CHANGE_INSTRUMENT_TO_GENERAL_MIDI_7;
             case NEW_LINE -> Action.CHANGE_INSTRUMENT_TO_GENERAL_MIDI_15;
             case SEMICOLON -> Action.CHANGE_INSTRUMENT_TO_GENERAL_MIDI_76;
