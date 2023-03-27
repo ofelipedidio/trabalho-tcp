@@ -1,7 +1,6 @@
 package tcp.trab_1.parse;
 
 public enum Token {
-    // Notes
     A,
     B,
     C,

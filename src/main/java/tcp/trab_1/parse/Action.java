@@ -1,7 +1,6 @@
 package tcp.trab_1.parse;
 
 public enum Action {
-    // Notes
     PLAY_A,
     PLAY_B,
     PLAY_C,
@@ -10,6 +9,7 @@ public enum Action {
     PLAY_F,
     PLAY_G,
 
+    PAUSE,
 
     DOUBLE_VOLUME_ROLL_OVER,
     OCTAVE_UP_ROLL_OVER,
@@ -29,6 +29,5 @@ public enum Action {
     INCREASE_INSTRUMENT_BY_6,
     INCREASE_INSTRUMENT_BY_7,
     INCREASE_INSTRUMENT_BY_8,
-    INCREASE_INSTRUMENT_BY_9,
-    PAUSE;
+    INCREASE_INSTRUMENT_BY_9
 }
